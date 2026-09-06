@@ -276,7 +276,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!212 &2006547789
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -358,7 +358,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _id: -1
   Active: 1
-  _connections: []
+  _connections:
+  - {fileID: 2006547791}
+  - {fileID: 0}
   _level: -1
   _resourcesPerLevel:
   - _resources:
