@@ -367,8 +367,8 @@ MonoBehaviour:
     - _resource: 0
       _amountPer: 0
   _producableResources: []
-  _productionRate: 1
-  _employeeCount: 1
+  _baseProductionRate: 0.5
+  _employeeCount: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

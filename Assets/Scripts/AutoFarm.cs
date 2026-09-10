@@ -46,6 +46,7 @@ public class AutoFarm : MonoBehaviour
     /// at level 0, index 1 being all resources gained at level 1, etc...
     /// </summary>
     [SerializeField] private List<PerLevelResources> _resourcesPerLevel = new();
+
     /// <summary>
     /// All resources this farm is able to produce at its current level.
     /// </summary>
@@ -54,11 +55,17 @@ public class AutoFarm : MonoBehaviour
     /// <summary>
     /// How fast the farm produces resources in resource generation event per second.
     /// </summary>
-    public float ProductionRate { get => _productionRate; }
+    public float ProductionRate
+    {
+        get => _baseProductionRate +
+        (Mathf.Pow(_employeeCount / GROWTH_LIMITER, _baseProductionRate * GROWTH_LIMITER) / _baseProductionRate);
+    }
+    
+    [Header("Production Rates")]
     /// <summary>
-    /// How fast the farm produces resources in resource generation event per second.
+    /// How fast the farm produces resources in resource generation event per second with no employees.
     /// </summary>
-    [SerializeField] private float _productionRate = 1f;
+    [SerializeField][Range(0.5f, 2f)] private float _baseProductionRate = 0.5f;
 
     /// <summary>
     /// Used to increase the <see cref="ProductionRate"><c>ProductionRate</c></see> of this farm.
@@ -71,7 +78,12 @@ public class AutoFarm : MonoBehaviour
     /// <summary>
     /// Used to increase the <see cref="ProductionRate"><c>ProductionRate</c></see> of this farm.
     /// </summary>
-    [SerializeField] private int _employeeCount = 1;
+    [SerializeField] private int _employeeCount = 0;
+
+    /// <summary>
+    /// Determines how sharpely <c>ProductionRate</c> scales with <c>EmployeeCount</c>.
+    /// </summary>
+    private const float GROWTH_LIMITER = 2f;
 
     /// <summary>
     /// Stores the coroutine respondible for producing resources on a timer.
@@ -132,7 +144,7 @@ public class AutoFarm : MonoBehaviour
     {
         while (Active)
         {
-            yield return new WaitForSeconds(1f / _productionRate);
+            yield return new WaitForSeconds(1f / ProductionRate);
             ResourceManager.s_Instance.IncreaseResources(_producableResources);
         }
     }
