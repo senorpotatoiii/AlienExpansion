@@ -9,11 +9,17 @@ public class ResourceManager : MonoBehaviour
 {
     public static ResourceManager s_Instance = null;
 
+    /// <summary>
+    /// Generic currency used for transactions.
+    /// </summary>
     public int Credits
     {
         get { return _credits; }
         set { _credits = (value < 0) ? 0 : value; }
     }
+    /// <summary>
+    /// Generic currency used for transactions.
+    /// </summary>
     [SerializeField] private int _credits = 0;
 
     public void Awake()
