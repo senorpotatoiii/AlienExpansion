@@ -7,6 +7,7 @@ using UnityEngine;
 /// <summary>
 /// Handles the storage and access of all <c>AutoFarms</c>.
 /// </summary>
+[ExecuteInEditMode]
 public class FarmManager : MonoBehaviour
 {
     public static FarmManager Instance;
@@ -32,6 +33,16 @@ public class FarmManager : MonoBehaviour
             Instance = this;
         else
             Destroy(this);
+    }
+
+    public void Start()
+    {
+        Initialize();
+    }
+
+    public void Update()
+    {
+        DebugConnections();
     }
     
     /// <summary>
@@ -68,8 +79,48 @@ public class FarmManager : MonoBehaviour
         return true;
     }
 
-    /*
-    Lines connecting farms in editor:
-    Debug.DrawLine(Vector3 pos1, Vector3 pos2, Color color);
-    */
+    /// <summary>
+    /// Uses a breadth first traversal to add debug lines between every <c>AutoFarm</c>. Connections between two
+    /// active farms are green, between an active and available farm are yellow, and between two inactive farms
+    /// are red.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Throws an exception if the starting farm has not
+    /// been set in the editor.</exception>
+    public void DebugConnections()
+    {
+        if (_startingFarm == null)
+            throw new InvalidOperationException("Starting Farm has not been set in editor.");
+        
+        Color connectionColor;
+        List<AutoFarm> visited = new();
+        Queue<AutoFarm> toVisit = new();
+        toVisit.Enqueue(_startingFarm);
+
+        while (toVisit.Count > 0)
+        {
+            if (visited.Contains(toVisit.Peek()))
+            {
+                toVisit.Dequeue();
+                continue;
+            }
+
+            foreach (AutoFarm farm in toVisit.Peek().Connections)
+            {
+                if (visited.Contains(farm))
+                    continue;
+
+                if (farm.Active)
+                    connectionColor = Color.green;
+                else if (_availableFarms.Contains(farm))
+                    connectionColor = Color.yellow;
+                else
+                    connectionColor = Color.red;
+                Debug.DrawLine(toVisit.Peek().transform.position, farm.transform.position, connectionColor);
+
+                toVisit.Enqueue(farm);
+            }
+
+            visited.Add(toVisit.Dequeue());
+        }
+    }
 }
